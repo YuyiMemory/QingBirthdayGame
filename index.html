@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>晴晴觀察日記</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="screen active" id="cover">
+        <div class="book">
+          <h1>晴晴觀察日記</h1>
+          <p class="subtitle">一本關於摸魚、玉米雞蛋、賴床，還有一天一天更喜歡妳的小遊戲。</p>
+          <button class="primary" data-next="timeline">翻開日記</button>
+        </div>
+      </section>
+
+      <section class="screen" id="timeline">
+        <header class="topbar">
+          <span>回憶頁籤</span>
+          <strong id="progressText">0 / 5</strong>
+        </header>
+        <div class="timeline" id="memoryList"></div>
+        <button class="primary hidden" id="toFinal" data-next="final">打開最後一頁</button>
+      </section>
+
+      <section class="screen mini" id="chatGame">
+        <header class="topbar">
+          <span>摸魚聊天室</span>
+          <strong><span id="chatScore">0</span> / 6</strong>
+        </header>
+        <div class="game-panel chat-panel" id="chatPanel">
+          <p class="hint">把飄上來的關心都收好，這些是今天份的陪伴。</p>
+        </div>
+        <button class="secondary" data-back="timeline">回日記</button>
+      </section>
+
+      <section class="screen mini" id="foodGame">
+        <header class="topbar">
+          <span>晴晴飲食圖鑑</span>
+          <strong>已選 <span id="foodScore">0</span></strong>
+        </header>
+        <div class="game-panel">
+          <p class="hint">從各地特色食物裡，選出妳想吃或喜歡的。選 5 個以上就解鎖這一頁。</p>
+          <div class="food-grid" id="foodGrid"></div>
+          <div class="receipt" id="foodReceipt">
+            <div class="receipt-head">
+              <strong>晴晴今日想吃</strong>
+              <span id="receiptStamp">選餐中</span>
+            </div>
+            <div class="receipt-list" id="receiptList">還沒點餐。</div>
+            <p id="receiptLine">選幾個想吃的，憶先記下來。</p>
+          </div>
+          <p class="note" id="foodNote"></p>
+        </div>
+        <button class="secondary" data-back="timeline">回日記</button>
+      </section>
+
+      <section class="screen mini" id="fishGame">
+        <header class="topbar">
+          <span>敲走討厭鬼</span>
+          <strong><span id="fishScore">0</span>%</strong>
+        </header>
+        <div class="game-panel wooden-room" id="pond">
+          <button class="woodfish" id="fish" aria-label="敲走討厭鬼">
+            <span class="wood-hammer">槌</span>
+            <svg class="brat-doll" viewBox="0 0 180 190" aria-hidden="true">
+              <path class="leg left" d="M74 153 L70 176" />
+              <path class="leg right" d="M104 153 L110 176" />
+              <path class="shoe left" d="M58 176 C68 169 79 171 82 180 C72 185 63 185 58 176Z" />
+              <path class="shoe right" d="M101 178 C112 171 122 174 124 183 C113 187 105 187 101 178Z" />
+              <path class="dress" d="M62 112 C73 106 108 106 119 113 L132 166 C112 176 72 175 51 166Z" />
+              <path class="arm left" d="M64 122 C49 132 44 146 48 158" />
+              <path class="arm right" d="M119 122 C134 132 139 146 135 158" />
+              <path class="bag-strap" d="M105 113 C91 130 76 147 62 165" />
+              <rect class="bag" x="45" y="140" width="30" height="27" rx="6" />
+              <path class="bag-line" d="M50 151 H70" />
+              <path class="braid left" d="M50 88 C34 94 35 115 51 119" />
+              <path class="braid right" d="M130 88 C146 94 145 115 129 119" />
+              <path class="braid-tip left" d="M46 118 C55 113 62 119 58 127 C50 130 44 126 46 118Z" />
+              <path class="braid-tip right" d="M134 118 C125 113 118 119 122 127 C130 130 136 126 134 118Z" />
+              <circle class="face" cx="90" cy="82" r="42" />
+              <path class="hair-cap" d="M51 78 C54 49 75 42 91 42 C111 42 128 54 130 79 C117 70 104 69 91 70 C74 71 64 69 51 78Z" />
+              <path class="bangs" d="M55 76 C64 59 73 68 78 56 C83 70 94 64 100 55 C106 69 118 62 126 78" />
+              <path class="kinder-hat" d="M43 49 C57 23 111 18 132 41 C138 49 129 59 109 58 C84 57 60 59 43 67 C34 66 34 56 43 49Z" />
+              <path class="hat-brim" d="M38 65 C63 53 107 53 137 59" />
+              <path class="brow" d="M65 73 L79 70" />
+              <path class="brow" d="M101 70 L115 73" />
+              <circle class="eye-dot" cx="73" cy="86" r="4" />
+              <circle class="eye-dot" cx="107" cy="86" r="4" />
+              <circle class="cheek left" cx="62" cy="96" r="7" />
+              <circle class="cheek right" cx="118" cy="96" r="7" />
+              <circle class="clown-nose" cx="90" cy="96" r="8" />
+              <path class="mouth" d="M80 105 C87 101 94 101 101 105" />
+              <path class="tear left" d="M70 90 C60 105 65 118 72 120 C81 116 78 103 70 90Z" />
+              <path class="tear right" d="M110 90 C100 105 105 118 112 120 C121 116 118 103 110 90Z" />
+            </svg>
+            <span class="hit-word">咚！</span>
+          </button>
+          <div class="energy" aria-label="能量條">
+            <div class="energy-fill" id="hammerEnergy"></div>
+          </div>
+          <p class="hint">連續敲擊把能量條集滿。不敲的話，能量會慢慢掉下來。</p>
+        </div>
+        <button class="secondary" data-back="timeline">回日記</button>
+      </section>
+
+      <section class="screen mini" id="dreamGame">
+        <header class="topbar">
+          <span>不要做惡夢</span>
+          <strong><span id="dreamScore">0</span> / 5</strong>
+        </header>
+        <div class="game-panel night" id="dreamPanel">
+          <p class="moon">月亮值班中</p>
+          <p class="hint">把壞夢泡泡戳破，讓今晚只剩下可以安心睡著的話。</p>
+          <div class="dream-bubbles" id="dreamCards"></div>
+        </div>
+        <button class="secondary" data-back="timeline">回日記</button>
+      </section>
+
+      <section class="screen mini" id="wakeGame">
+        <header class="topbar">
+          <span>賴床到中午</span>
+          <strong id="wakeStatus">輕輕叫醒</strong>
+        </header>
+        <div class="game-panel wake">
+          <div class="pillow">Zzz</div>
+          <div class="wake-steps" id="wakeSteps" aria-label="叫醒進度"></div>
+          <p class="hint" id="wakeHint">輕輕點八下叫醒她。太急不行，溫柔一點。</p>
+          <button class="primary compact" id="wakeButton">輕輕叫醒</button>
+        </div>
+        <button class="secondary" data-back="timeline">回日記</button>
+      </section>
+
+      <section class="screen" id="final">
+        <div class="letter">
+          <p class="eyebrow">最後一頁</p>
+          <h2>生日快樂，小晴</h2>
+          <p>
+            做這個小遊戲的時候，我才發現自己真的記了好多跟妳有關的小事。
+            摸魚、賴床、想吃的東西、不要做惡夢，還有那些妳累了卻還是努力撐住的時候。
+          </p>
+          <p>
+            我不知道這些東西看起來會不會有點幼稚，但我想讓妳知道，
+            妳的每一點可愛、每一點辛苦，我都有放在心上。
+          </p>
+          <p>
+            新的一歲，希望妳可以多一點開心，少一點委屈。
+            也希望不管妳遇到什麼，我都能在妳旁邊，陪妳慢慢變好。
+          </p>
+          <p class="love">生日快樂。我很喜歡妳，也會繼續好好喜歡妳。</p>
+          <button class="primary" data-next="cover">再玩一次</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
