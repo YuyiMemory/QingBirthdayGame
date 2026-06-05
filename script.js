@@ -40,6 +40,8 @@ const state = {
   wakeScore: 0,
   wakeRound: 1,
   lastWake: 0,
+  wakePaused: false,
+  wakeResetTimer: null,
   chatTimers: [],
   chatSpawner: null,
   hammerEnergy: 0,
@@ -52,6 +54,14 @@ const memoryList = document.querySelector("#memoryList");
 const progressText = document.querySelector("#progressText");
 const toFinal = document.querySelector("#toFinal");
 const toast = document.querySelector("#toast");
+const transitionLayer = document.querySelector("#transitionLayer");
+const returnPrompts = {
+  chatGame: "帶著摸魚成果回日記",
+  foodGame: "把菜單貼回日記",
+  fishGame: "帶著勝利回日記",
+  dreamGame: "把好夢收進日記",
+  wakeGame: "真的起床，回日記",
+};
 
 function showToast(message) {
   toast.textContent = message;
@@ -69,6 +79,7 @@ function showScreen(id) {
   if (id === "fishGame") resetHammerGame();
   if (id === "dreamGame") resetDreamGame();
   if (id === "wakeGame") resetWakeGame();
+  updateReturnButton(id);
 }
 
 function complete(id, message) {
@@ -77,20 +88,31 @@ function complete(id, message) {
     renderMemories();
     showToast(message);
   }
+  updateReturnButton(id);
+}
+
+function updateReturnButton(id) {
+  const button = document.querySelector(`#${id} [data-back="timeline"]`);
+  if (!button) return;
+
+  const isComplete = state.completed.has(id);
+  button.classList.toggle("return-ready", isComplete);
+  button.textContent = isComplete ? returnPrompts[id] : "回日記";
 }
 
 function renderMemories() {
   memoryList.innerHTML = "";
-  memories.forEach((memory) => {
+  memories.forEach((memory, index) => {
     const done = state.completed.has(memory.id);
     const button = document.createElement("button");
     button.className = `memory ${done ? "done" : ""}`;
+    button.style.setProperty("--i", index);
     button.innerHTML = `
       <div>
         <strong>${memory.title}</strong>
         <span>${memory.text}</span>
       </div>
-      <div class="badge">${done ? "完成" : "玩"}</div>
+      <div class="badge">${done ? "已蓋章" : "開始"}</div>
     `;
     button.addEventListener("click", () => showScreen(memory.id));
     memoryList.appendChild(button);
@@ -104,9 +126,25 @@ document.addEventListener("click", (event) => {
   const next = event.target.closest("[data-next]");
   const back = event.target.closest("[data-back]");
 
-  if (next) showScreen(next.dataset.next);
+  if (next) {
+    if (next.dataset.next === "timeline" && document.querySelector("#cover").classList.contains("active")) {
+      playOpeningTransition();
+    } else {
+      showScreen(next.dataset.next);
+    }
+  }
   if (back) showScreen(back.dataset.back);
 });
+
+function playOpeningTransition() {
+  transitionLayer.classList.add("show");
+  setTimeout(() => {
+    showScreen("timeline");
+  }, 1550);
+  setTimeout(() => {
+    transitionLayer.classList.remove("show");
+  }, 1550);
+}
 
 function resetChatGame() {
   const panel = document.querySelector("#chatPanel");
@@ -173,46 +211,46 @@ function stopChatGame() {
 }
 
 const foods = [
-  ["成都", "串串香"],
-  ["成都", "麻辣火鍋"],
-  ["成都", "烤魚"],
-  ["成都", "冰粉"],
+  ["成都", "火鍋"],
+  ["成都", "串串"],
   ["成都", "擔擔麵"],
-  ["成都", "夫妻肺片"],
+  ["成都", "甜水麵"],
   ["成都", "鐘水餃"],
   ["成都", "龍抄手"],
-  ["成都", "兔頭"],
-  ["成都", "甜水麵"],
-  ["香港", "蛋撻"],
-  ["香港", "燒臘飯"],
-  ["香港", "車仔麵"],
+  ["成都", "夫妻肺片"],
+  ["成都", "冰粉"],
+  ["成都", "蛋烘糕"],
+  ["成都", "烤魚"],
+  ["香港", "港式奶茶"],
   ["香港", "菠蘿油"],
+  ["香港", "蛋撻"],
   ["香港", "雲吞麵"],
-  ["香港", "魚蛋粉"],
-  ["香港", "雞蛋仔"],
-  ["香港", "絲襪奶茶"],
-  ["香港", "煲仔飯"],
-  ["香港", "豬扒包"],
-  ["台灣", "牛肉麵"],
+  ["香港", "燒臘飯"],
+  ["香港", "腸粉"],
+  ["香港", "魚蛋"],
+  ["香港", "車仔麵"],
+  ["香港", "楊枝甘露"],
+  ["香港", "西多士"],
+  ["台灣", "滷肉飯"],
   ["台灣", "鹽酥雞"],
   ["台灣", "珍珠奶茶"],
-  ["台灣", "炭烤玉米"],
-  ["台灣", "滷肉飯"],
+  ["台灣", "牛肉麵"],
   ["台灣", "蚵仔煎"],
+  ["台灣", "滷味"],
+  ["台灣", "雞排"],
+  ["台灣", "甜不辣"],
+  ["台灣", "豆花"],
   ["台灣", "小籠包"],
-  ["台灣", "臭豆腐"],
-  ["台灣", "芒果冰"],
-  ["台灣", "大腸包小腸"],
-  ["日本", "拉麵"],
   ["日本", "壽司"],
-  ["日本", "大阪燒"],
-  ["日本", "壽喜燒"],
+  ["日本", "拉麵"],
+  ["日本", "燒肉"],
   ["日本", "章魚燒"],
-  ["日本", "天婦羅"],
   ["日本", "咖哩飯"],
-  ["日本", "鰻魚飯"],
+  ["日本", "丼飯"],
+  ["日本", "天婦羅"],
+  ["日本", "可麗餅"],
   ["日本", "抹茶甜點"],
-  ["日本", "和牛燒肉"],
+  ["日本", "燒鳥"],
 ];
 
 const foodGoal = 5;
@@ -224,6 +262,60 @@ const foodReceipt = document.querySelector("#foodReceipt");
 const receiptList = document.querySelector("#receiptList");
 const receiptStamp = document.querySelector("#receiptStamp");
 const receiptLine = document.querySelector("#receiptLine");
+let foodDragStartY = 0;
+let foodDragStartScroll = 0;
+let foodDragPointerId = null;
+let foodDragMoved = false;
+
+foodGrid.addEventListener("pointerdown", (event) => {
+  if (event.target.closest(".food")) return;
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+
+  foodDragStartY = event.clientY;
+  foodDragStartScroll = foodGrid.scrollTop;
+  foodDragPointerId = event.pointerId;
+  foodDragMoved = false;
+  foodGrid.classList.add("dragging");
+  foodGrid.setPointerCapture(event.pointerId);
+});
+
+foodGrid.addEventListener("pointermove", (event) => {
+  if (event.pointerId !== foodDragPointerId) return;
+
+  const deltaY = event.clientY - foodDragStartY;
+  if (Math.abs(deltaY) < 8) return;
+
+  foodDragMoved = true;
+  foodGrid.scrollTop = foodDragStartScroll - deltaY;
+  event.preventDefault();
+});
+
+function stopFoodDrag(event) {
+  if (Number.isInteger(event.pointerId) && foodGrid.hasPointerCapture(event.pointerId)) {
+    foodGrid.releasePointerCapture(event.pointerId);
+  }
+  foodDragPointerId = null;
+  foodGrid.classList.remove("dragging");
+
+  if (foodDragMoved) {
+    setTimeout(() => {
+      foodDragMoved = false;
+    }, 160);
+  }
+}
+
+foodGrid.addEventListener("pointerup", stopFoodDrag);
+foodGrid.addEventListener("pointercancel", stopFoodDrag);
+foodGrid.addEventListener(
+  "click",
+  (event) => {
+    if (!foodDragMoved || event.target.closest(".food")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    foodDragMoved = false;
+  },
+  true
+);
 
 const receiptLines = [
   "憶已收到，安排中。",
@@ -334,13 +426,13 @@ function resetHammerGame() {
 }
 
 fish.addEventListener("click", () => {
-  if (state.hammerEnergy >= 100) return;
-  setHammerEnergy(state.hammerEnergy + 14);
+  const wasCleared = state.hammerEnergy >= 100;
+  if (!wasCleared) setHammerEnergy(state.hammerEnergy + 14);
   fish.classList.remove("hit");
   void fish.offsetWidth;
   fish.classList.add("hit");
 
-  if (state.hammerEnergy >= 100) {
+  if (!wasCleared && state.hammerEnergy >= 100) {
     stopHammerDecay();
     fish.classList.add("cleared");
     complete("fishGame", "討厭鬼退散，晴晴今天也要開心。");
@@ -395,9 +487,13 @@ for (let index = 0; index < 8; index++) {
 }
 
 function resetWakeGame() {
+  clearTimeout(state.wakeResetTimer);
+  state.wakeResetTimer = null;
   state.wakeScore = 0;
   state.wakeRound = 1;
   state.lastWake = 0;
+  state.wakePaused = false;
+  wakeButton.disabled = false;
   wakeHint.textContent = "輕輕點八下叫醒她。太急不行，溫柔一點。";
   renderWakeSteps();
 }
@@ -414,6 +510,8 @@ function renderWakeSteps() {
 }
 
 wakeButton.addEventListener("click", () => {
+  if (state.wakePaused) return;
+
   const now = Date.now();
   if (now - state.lastWake < 420) {
     wakeHint.textContent = "太急啦，晴晴要被吵醒生氣了。";
@@ -433,12 +531,17 @@ wakeButton.addEventListener("click", () => {
   if (state.wakeRound === 1) {
     wakeHint.textContent = "起床成功...但她又躺回去了。";
     state.wakeRound = 2;
-    setTimeout(() => {
+    state.wakePaused = true;
+    wakeButton.disabled = true;
+    state.wakeResetTimer = setTimeout(() => {
       state.wakeScore = 0;
       state.lastWake = 0;
+      state.wakePaused = false;
+      wakeButton.disabled = false;
       renderWakeSteps();
       wakeHint.textContent = "再溫柔叫一次，這次要真的起床。";
-    }, 900);
+      state.wakeResetTimer = null;
+    }, 2900);
     return;
   }
 
