@@ -4,11 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>晴晴觀察日記</title>
-    <link rel="stylesheet" href="styles.css?v=20260606-food-blank-drag" />
+    <link rel="stylesheet" href="styles.css?v=20260607-countdown-skip" />
   </head>
   <body>
     <main class="app">
-      <section class="screen active" id="cover">
+      <section class="screen active" id="countdown">
+        <div class="countdown-card">
+          <p class="eyebrow">小晴生日倒數</p>
+          <h1>等到 6/8 00:00</h1>
+          <p class="subtitle">時間一到，就可以打開這本只給妳的日記。</p>
+          <div class="countdown-clock" aria-label="生日倒數">
+            <div>
+              <strong id="countdownDays">00</strong>
+              <span>天</span>
+            </div>
+            <div>
+              <strong id="countdownHours">00</strong>
+              <span>時</span>
+            </div>
+            <div>
+              <strong id="countdownMinutes">00</strong>
+              <span>分</span>
+            </div>
+            <div>
+              <strong id="countdownSeconds">00</strong>
+              <span>秒</span>
+            </div>
+          </div>
+          <p class="countdown-note" id="countdownNote">小驚喜還在封印中。</p>
+          <button class="secondary countdown-skip" data-next="cover">提前打開</button>
+        </div>
+      </section>
+
+      <section class="screen" id="cover">
         <div class="book">
           <h1>小晴生日快樂</h1>
           <p class="subtitle">這是一個只給妳的小遊戲。希望妳玩完會偷偷笑一下。</p>
@@ -166,6 +194,6 @@
     </div>
 
     <div class="toast" id="toast"></div>
-    <script src="script.js?v=20260606-food-blank-drag"></script>
+    <script src="script.js?v=20260607-countdown-skip"></script>
   </body>
 </html>

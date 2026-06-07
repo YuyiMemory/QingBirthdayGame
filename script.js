@@ -55,6 +55,14 @@ const progressText = document.querySelector("#progressText");
 const toFinal = document.querySelector("#toFinal");
 const toast = document.querySelector("#toast");
 const transitionLayer = document.querySelector("#transitionLayer");
+const birthdayUnlockAt = new Date("2026-06-08T00:00:00+08:00").getTime();
+const countdownEls = {
+  days: document.querySelector("#countdownDays"),
+  hours: document.querySelector("#countdownHours"),
+  minutes: document.querySelector("#countdownMinutes"),
+  seconds: document.querySelector("#countdownSeconds"),
+  note: document.querySelector("#countdownNote"),
+};
 const returnPrompts = {
   chatGame: "帶著摸魚成果回日記",
   foodGame: "把菜單貼回日記",
@@ -70,9 +78,52 @@ function showToast(message) {
   showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
+function padTime(value) {
+  return String(value).padStart(2, "0");
+}
+
+function updateCountdown() {
+  if (!countdownEls.days) return;
+
+  const remaining = birthdayUnlockAt - Date.now();
+  if (remaining <= 0) {
+    countdownEls.days.textContent = "00";
+    countdownEls.hours.textContent = "00";
+    countdownEls.minutes.textContent = "00";
+    countdownEls.seconds.textContent = "00";
+    countdownEls.note.textContent = "生日時間到，可以打開了。";
+    clearInterval(updateCountdown.timer);
+    showScreen("cover");
+    return;
+  }
+
+  const totalSeconds = Math.floor(remaining / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  countdownEls.days.textContent = padTime(days);
+  countdownEls.hours.textContent = padTime(hours);
+  countdownEls.minutes.textContent = padTime(minutes);
+  countdownEls.seconds.textContent = padTime(seconds);
+}
+
+function startCountdown() {
+  updateCountdown();
+  if (birthdayUnlockAt > Date.now()) {
+    updateCountdown.timer = setInterval(updateCountdown, 1000);
+  }
+}
+
+function stopCountdown() {
+  clearInterval(updateCountdown.timer);
+}
+
 function showScreen(id) {
   screens.forEach((screen) => screen.classList.toggle("active", screen.id === id));
 
+  if (id !== "countdown") stopCountdown();
   if (id !== "chatGame") stopChatGame();
   if (id !== "fishGame") stopHammerDecay();
   if (id === "chatGame") resetChatGame();
@@ -549,5 +600,6 @@ wakeButton.addEventListener("click", () => {
   complete("wakeGame", "賴床關卡通過。");
 });
 
+startCountdown();
 renderMemories();
 renderWakeSteps();
